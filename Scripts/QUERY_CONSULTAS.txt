@@ -1,0 +1,31 @@
+
+SELECT 
+	Id,
+	Nombre,
+	Stock,
+	Precio
+FROM Productos
+ORDER BY Nombre;
+
+SELECT 
+	c.Id,
+	c.Nombre,
+	c.Email,
+	COUNT(v.Id) AS TotalVentas,
+	ISNULL(SUM(dv.Cantidad * dv.PrecioUnitario), 0) AS TotalImporte
+FROM Clientes c
+LEFT JOIN Ventas v ON c.Id = v.ClientId
+LEFT JOIN DetalleVenta dv ON v.Id = dv.VentaId
+GROUP BY c.Id, c.Nombre, c.Email
+ORDER BY TotalImporte DESC;
+
+
+SELECT TOP 5
+	p.Id,
+	p.Nombre,
+	SUM(dv.Cantidad) AS TotalCantidadVendida,
+	COUNT(dv.VentaId) AS VecesEnVentas
+FROM DetalleVenta dv
+INNER JOIN Productos p ON dv.ProductId = p.Id
+GROUP BY p.Id, p.Nombre
+ORDER BY TotalCantidadVendida DESC;

@@ -1,0 +1,24 @@
+SET IDENTITY_INSERT Productos ON;
+INSERT INTO Productos (Id, Nombre, Precio, Stock) VALUES
+(1, 'Samsung Galaxy', 1500.00, 10),
+(2, 'Apple', 2000.00, 15);
+SET IDENTITY_INSERT Productos OFF;
+
+SET IDENTITY_INSERT Clientes ON;
+INSERT INTO Clientes(Id, Nombre, Email) VALUES
+(1, 'Marco', 'marco@gmail.com'),
+(2, 'Andre', 'An12dre@gmail.com');
+SET IDENTITY_INSERT Clientes OFF;
+
+SET IDENTITY_INSERT Ventas ON;
+INSERT INTO Ventas(Id, Fecha, ClientId) VALUES
+(1, '2025-10-10 10:30:00', 1),
+(2, '2025-09-17 12:30:00', 2),
+(3, '2025-12-1 13:00:00', 2);
+SET IDENTITY_INSERT Ventas OFF;
+
+SET IDENTITY_INSERT DetalleVenta ON;
+INSERT INTO DetalleVenta(Id, VentaId, ProductId, Cantidad, PrecioUnitario) VALUES
+(1, 1, 2, 2, 1500.00),
+(2, 1, 2, 2, 2000.00);
+SET IDENTITY_INSERT DetalleVenta OFF;
