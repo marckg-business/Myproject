@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Ventas - mywebsite</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    body {
+        background-color: #f8f9fa;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+    }
+    .header-banner {
+        background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+        color: white;
+        padding: 1.2rem 0;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.15);
+    }
+    .venta-card {
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 1.2rem;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .venta-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+    }
+    .venta-header {
+        background-color: #f1f5f9;
+        padding: 0.8rem 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .venta-id {
+        font-weight: 700;
+        color: #1e293b;
+        font-size: 1.1rem;
+    }
+    .venta-fecha {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-top: 0.25rem;
+    }
+    .venta-total {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 0.35rem 0.8rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+    .table-venta {
+        margin-bottom: 0;
+    }
+    .table-venta th {
+        font-weight: 600;
+        color: #475569;
+        background-color: #f8fafc;
+    }
+    .table-venta td {
+        vertical-align: middle;
+        padding: 0.65rem 1rem;
+        border-color: #e2e8f0;
+    }
+    .producto-nombre {
+        font-weight: 500;
+        color: #1e293b;
+    }
+    .cantidad-badge {
+        background-color: #dbeafe;
+        color: #1d4ed8;
+        padding: 0.2rem 0.6rem;
+        border-radius: 20px;
+        font-weight: 600;
+    }
+    .no-results {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: #64748b;
+    }
+    .no-results i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.6;
+    }
+    @media (max-width: 576px) {
+        .venta-header {
+            flex-direction: column;
+            text-align: center;
+            gap: 0.5rem;
+        }
+        .venta-total {
+            width: 100%;
+            justify-content: center;
+            display: flex;
+        }
+        .table-venta th,
+        .table-venta td {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.875rem;
+        }
+    }
+</style>
+</head>
+<body class="bg-light">
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📜 Historial de Ventas</h2>
+        <a href="/" class="btn btn-outline-secondary">&larr; Volver</a>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-2">
+                <div class="col-md-5">
+                    <label class="form-label">Selecciona un cliente</label>
+                    <select id="clienteSelect" class="form-select">
+                        <option value="">Cargando clientes...</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">&nbsp;</label>
+                    <button id="btnBuscar" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Ver historial
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultados"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const clienteSelect = document.getElementById('clienteSelect');
+    const btnBuscar = document.getElementById('btnBuscar');
+    const resultadosDiv = document.getElementById('resultados');
+    const API_BASE = 'http://localhost:5276';
+
+    let clientes = [];
+
+    // Cargar clientes
+    async function cargarClientes() {
+        try {
+            const res = await fetch(`${API_BASE}/api/Clientes`);
+            const data = await res.json();
+            clientes = data.map(c => ({ id: c.Id ?? c.id, nombre: c.Nombre ?? c.nombre, email: c.Email ?? c.email }));
+            
+            clienteSelect.innerHTML = '<option value="">Selecciona un cliente...</option>';
+            clientes.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = `${c.nombre} — ${c.email}`;
+                clienteSelect.appendChild(opt);
+            });
+        } catch (e) {
+            clienteSelect.innerHTML = '<option value="">Error al cargar clientes</option>';
+        }
+    }
+
+    // Buscar historial
+    async function buscarHistorial() {
+        const clienteId = parseInt(clienteSelect.value);
+        if (!clienteId) {
+            alert('⚠️ Por favor selecciona un cliente.');
+            return;
+        }
+
+        try {
+            resultadosDiv.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary"></div> <small>Cargando...</small></div>';
+            
+            const res = await fetch(`${API_BASE}/api/HistorialVentas/cliente/${clienteId}`);
+            if (!res.ok) throw new Error(`Error ${res.status}`);
+            
+            const ventas = await res.json();
+
+            if (ventas.length === 0) {
+                resultadosDiv.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle"></i> 
+                        Este cliente no tiene ventas registradas.
+                    </div>`;
+                return;
+            }
+
+            // Renderizar
+            // Renderizar
+			let html = `<h4 class="mb-3">Ventas encontradas: ${ventas.length}</h4>`;
+
+			ventas.forEach(v => {
+				const fecha = new Date(v.fecha).toLocaleString('es-ES', {
+					day: '2-digit',
+					month: 'short',
+					year: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit'
+				});
+
+				html += `
+				<div class="venta-card">
+					<div class="venta-header">
+						<div>
+							<div class="venta-id">Venta #${v.ventaId}</div>
+							<div class="venta-fecha">${fecha}</div>
+						</div>
+						<div class="venta-total">$${v.total.toFixed(2)}</div>
+					</div>
+					<div class="table-responsive">
+						<table class="table table-venta mb-0">
+							<thead>
+								<tr>
+									<th>Producto</th>
+									<th class="text-center">Cantidad</th>
+									<th class="text-end">Precio</th>
+									<th class="text-end">Subtotal</th>
+								</tr>
+							</thead>
+							<tbody>`;
+				
+				v.detalles.forEach(d => {
+					const precio = d.precio ?? 0;
+					const subtotal = d.subtotal ?? 0;
+					const cantidad = d.cantidad ?? 0;
+
+					html += `
+						<tr>
+							<td>
+								<div class="producto-nombre">${d.producto || '—'}</div>
+							</td>
+							<td class="text-center">
+								<span class="cantidad-badge">${cantidad}</span>
+							</td>
+							<td class="text-end">$${precio.toFixed(2)}</td>
+							<td class="text-end">$${subtotal.toFixed(2)}</td>
+						</tr>`;
+				});
+
+				html += `
+						</tbody>
+					</table>
+				</div>
+			</div>`;
+			});
+
+            resultadosDiv.innerHTML = html;
+
+        } catch (error) {
+            resultadosDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> 
+                    Error al cargar el historial: ${error.message}
+                </div>`;
+        }
+    }
+
+    // Eventos
+    btnBuscar.addEventListener('click', buscarHistorial);
+    clienteSelect.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') buscarHistorial();
+    });
+
+    // Iniciar
+    cargarClientes();
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\Administrator\\mywebsite\\wwwroot\\historial.html",
+      "PackagePath": "staticwebassets\\historial.html"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\mywebsite\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\mywebsite\\wwwroot\\js\\productos.js",
+      "PackagePath": "staticwebassets\\js\\productos.js"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\mywebsite\\wwwroot\\js\\venta.js",
+      "PackagePath": "staticwebassets\\js\\venta.js"
+    },
+    {
+      "Id": "C:\\Users\\Administrator\\mywebsite\\wwwroot\\venta.html",
+      "PackagePath": "staticwebassets\\venta.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.mywebsite.props",
+      "PackagePath": "build\\mywebsite.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.mywebsite.props",
+      "PackagePath": "buildMultiTargeting\\mywebsite.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.mywebsite.props",
+      "PackagePath": "buildTransitive\\mywebsite.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.mywebsite.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
